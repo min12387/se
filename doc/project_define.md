@@ -32,12 +32,14 @@ Mini Drive
 ## 5. 기존 유사 소프트웨어 조사 및 분석
 
 ### 1) Google Drive
-실시간 협업 기능 제공 (여러 사용자가 동시에 문서 작업 가능)
-다양한 파일 형식 지원 및 클라우드 저장 기능
-Google Docs, Sheets 등 Google 서비스와 연동
+- 실시간 협업 기능 제공 (여러 사용자가 동시에 문서 작업 가능)
+- 다양한 파일 형식 지원 및 클라우드 저장 기능
+- Google Docs, Sheets 등 Google 서비스와 연동
 
 ### 2) OneDrive
-
+- Microsoft 365 서비스(Word, Excel 등)와 강력한 연동
+- Windows 환경과 기본 통합되어 편리한 사용 가능
+- 자동 동기화 및 백업 기능 제공
 
 ---
 
