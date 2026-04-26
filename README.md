@@ -6,4 +6,4 @@
 |------|------|
 | 프로젝트 정의서 | [project_define.md](doc/project_define.md) |
 | 품질 요소 측정 | [qualities.md](doc/qualities.md) |
-| 프로젝트 계획서 | [qualities.md](doc/project_manage.md) |
+| 프로젝트 계획서 | [project_manage.md](doc/project_manage.md) |
