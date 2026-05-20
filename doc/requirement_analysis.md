@@ -1,4 +1,4 @@
-# 📄 [MiniDrive]_RequirementAnalysis_v1.0_260518
+# 📄 [MiniDrive]_RequirementAnalysis_v1.1_260520
 
 # 1. 개요
 
@@ -56,9 +56,9 @@ flowchart TB
         Search(파일 검색)
         Restore(파일 복구)
         Manage(계정 관리)
+        Auth(사용자 인증)
     end
 
-    User --> Login
     User --> Upload
     User --> Download
     User --> Share
@@ -68,7 +68,36 @@ flowchart TB
     Admin --> Manage
 
     Guest --> Download
+
+    Upload -. "<<include>>" .-> Auth
+    Download -. "<<include>>" .-> Auth
+    Share -. "<<include>>" .-> Auth
+    Restore -. "<<include>>" .-> Auth
 ```
+
+### 2.4 유스케이스 명세서
+
+#### UC-04 파일 공유
+
+| 항목 | 내용 |
+|------|------|
+| 유스케이스 ID | UC-04 |
+| 유스케이스명 | 파일 공유 |
+| 주요 액터 | 사용자(User) |
+| 사전 조건 | 사용자가 로그인 상태이며 공유 권한을 가지고 있어야 함 |
+| 사후 조건 | 공유 링크가 생성되고 DB에 저장됨 |
+
+##### 정상 흐름 (Main Flow)
+1. 사용자가 공유할 파일을 선택한다.
+2. 시스템은 로그인 세션 및 권한을 확인한다.
+3. 사용자가 공유 요청을 수행한다.
+4. 시스템은 공유 링크를 생성한다.
+5. 생성된 링크 정보를 데이터베이스에 저장한다.
+6. 시스템은 사용자에게 공유 URL을 반환한다.
+
+##### 예외 흐름 (Exception Flow)
+- 권한이 없는 경우: 공유 요청을 거부하고 오류 메시지를 출력한다.
+- 파일이 존재하지 않는 경우: 링크 생성 요청을 취소한다.
 
 ---
 
@@ -83,6 +112,8 @@ flowchart TB
 | Folder | 폴더 구조 관리 |
 | ShareLink | 외부 공유 링크 관리 |
 | AuthService | 로그인 인증 처리 |
+| ShareService | 공유 링크 생성 처리 |
+| ShareUI | 사용자 공유 화면 처리 |
 
 ---
 
@@ -92,22 +123,34 @@ flowchart TB
 classDiagram
 
     class User {
+        -String userId
+        -String email
+        -String password
         +login()
         +logout()
     }
 
     class File {
+        -String fileId
+        -String fileName
+        -long size
+        -Date uploadDate
         +upload()
         +download()
         +delete()
     }
 
     class Folder {
+        -String folderId
+        -String folderName
         +create()
         +move()
     }
 
     class ShareLink {
+        -String linkId
+        -String url
+        -Date expireDate
         +generate()
         +expire()
     }
@@ -116,10 +159,22 @@ classDiagram
         +authenticate()
     }
 
-    User --> File
-    Folder --> File
-    File --> ShareLink
-    AuthService --> User
+    class ShareService {
+        +createLink()
+        +saveLink()
+    }
+
+    class ShareUI {
+        +requestShare()
+        +showLink()
+    }
+
+    User "1" --> "*" File : owns
+    Folder "1" --> "*" File : contains
+    File "1" --> "0..1" ShareLink : sharedBy
+    AuthService --> User : authenticate
+    ShareService --> ShareLink : create
+    ShareUI --> ShareService : request
 ```
 
 ---
@@ -132,7 +187,7 @@ classDiagram
 sequenceDiagram
 
     actor User
-    participant UI
+    participant UI as ShareUI
     participant ShareService
     participant DB
 
@@ -165,8 +220,9 @@ stateDiagram-v2
 # 5. 분석 결과
 
 - 파일 관리 기능을 중심으로 사용자·공유·인증 객체를 식별하였다.
-- 주요 기능 흐름을 유스케이스와 순차 다이어그램으로 표현하였다.
-- 객체 간 관계를 통해 시스템 구조를 단순화하여 분석하였다.
+- 주요 기능 흐름을 유스케이스 및 순차 다이어그램으로 표현하였다.
+- 클래스 다이어그램에 객체의 속성과 다중성을 추가하여 구조적 관계를 구체화하였다.
+- 순차 다이어그램의 ShareUI, ShareService 객체를 클래스 다이어그램에 반영하여 모델 간 일관성을 유지하였다.
 - 이후 설계 단계에서 데이터베이스 및 API 설계로 확장 가능하다.
 
 ---
@@ -175,3 +231,4 @@ stateDiagram-v2
 
 - Mini Drive 요구사항 정의서
 - UML 객체지향 분석 강의자료
+- 객체지향 분석 및 설계 실습 자료
